@@ -12,7 +12,7 @@ def weather(request):
         return JsonResponse(list1,safe=False)
     if 'location' in request.GET:
         city = request.GET.get('location')
-        url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid=0f9d4ce9c441a0f7febbe97458dcb0e4"
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid= your api here"
         # demonstrate how to use the 'params' parameter:
         x = requests.get(url)
         #Converts response object to dictionary
