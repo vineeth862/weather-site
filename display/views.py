@@ -1,20 +1,29 @@
 from django.shortcuts import render
+from django.http import JsonResponse
+from .models import whole_city
 import json
 import requests
-# Create your views here.
 def weather(request):
-    if "location" in request.GET:
+    if 'term' in request.GET:
+        cities = whole_city.objects.filter(city_names__istartswith=request.GET.get("term"))
+        list1=[]
+        for c in cities:
+            list1.append(c.city_names)
+        return JsonResponse(list1,safe=False)
+    if 'location' in request.GET:
         city = request.GET.get('location')
-        url= f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid=0f9d4ce9c441a0f7febbe97458dcb0e4"
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid=0f9d4ce9c441a0f7febbe97458dcb0e4"
+        # demonstrate how to use the 'params' parameter:
         x = requests.get(url)
+        #Converts response object to dictionary
         y = x.json()
-        context={
-            'city_name' : f"city_name:{y['name']}",
-            'Temp': f"Temperature:{y['main']['temp']}",
-            'Pressure': f"Pressure:{y['main']['pressure']}",
-            'Humidity': f"Humidity:{y['main']['humidity']}",
+        context = {
+            'c_name' : f"City_name:{y['name']}",
+            'Temperature': f"Temperature: {y['main']['temp']} F",
+            'Pressure': f"Pressure: {y['main']['pressure']}",
+            'Humidity': f"Humidity: {y['main']['humidity']}",
             'Weather_condition': f"Weather_Condition: {y['weather'][0]['description'].upper()}"
         }
-        return render(request,"home.html",context)
 
-    return render(request,"home.html")
+        return render(request, 'home.html', context)
+    return render(request, 'home.html')
